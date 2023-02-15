@@ -1,0 +1,22 @@
+{% extends 'website/main.html' %}
+{% load static %}
+
+{% block title %}User Page{% endblock %}
+
+{% block body %}
+    <head>
+        <link rel="stylesheet" href="{% static 'website/css/userpage.css' %}">
+    </head>
+    <div class="container">
+        <div class="block">
+            <form action="{% url 'userpage' %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <h1>User Information</h1>
+                <p>Username: {{ form.username }}</p>
+                <p>Email: {{ form.email }}</p>
+                <button onclick="editUsername()">Edit Username</button>
+                <p>If you want to change password click <a href="{% url 'password-change' %}">here</a></p>
+            </form>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends 'website/main.html' %}
+{% load static %}
+
+{% block title %}Register page{% endblock %}
+
+{% block body %}
+    <head>
+        <meta charset="UTF-8">
+        <title>Login</title>
+        <link href="https://fonts.googleapis.com/css?family=Nunito:600" rel="stylesheet">
+        <link rel="stylesheet" href="{% static 'website/css/login.css' %}">
+        <script src="{% static 'website/js/login.js' %}"></script>
+    </head>
+    <body>
+    <main>
+        <div class="login-holder">
+            {% if form.errors %}
+                <div class="alert alert-warning alert-dismissible fade show" role="alert" style="margin-top: 50px>
+                    {{ form.errors }}
+                </div>
+            {% endif %}
+            <div class="container">
+                <div class="login">
+                    <div class="form-holder">
+                        <div class="dish"></div>
+                        <div class="header">
+                            <a class="header-item activated" href="{% url 'auth' %}" id="login-caller">Login</a>
+                            <a class="header-item" href="{% url 'register' %}" id="register-caller">Sign up</a>
+                        </div>
+                        <form action="{% url 'register' %}" method="POST">
+                            {% csrf_token %}
+                            <div class="form activated" id="register">
+                                <div class="input-row">
+                                    {{ form.email }}
+                                    <label class="label" for="{{ form.email.id_for_label }}>Email</label>
+                                        <span class=" highlite"></span>
+                                    <span class="bar"></span>
+                                </div>
+                                <div class="input-row">
+                                    {{ form.username }}
+                                    <label class="label" for="{{ form.username.id_for_label }}>Username</label>
+                                        <span class=" highlite"></span>
+                                    <span class="bar"></span>
+                                </div>
+                                <div class="input-row">
+                                    {{ form.password1 }}
+                                    <label class="label" for="{{ form.password1.id_for_label }}>Password</label>
+                                        <span class=" highlite"></span>
+                                    <span class="bar"></span>
+                                </div>
+                                <div class="input-row">
+                                    {{ form.password2 }}
+                                    <label class="label" for="{{ form.password2.id_for_label }}>Password</label>
+                                        <span class=" highlite"></span>
+                                    <span class="bar"></span>
+                                </div>
+                                <script src='https://www.google.com/recaptcha/api.js'></script>
+                                    <div class="form-group g-recaptcha"
+                                         data-sitekey="6LclZ4IkAAAAAMsIaLeBdhUdXwnheL3wsJARdafU"></div>
+                            </div>
+                            <div class="sub-button">
+                                <input class="button" type="submit" value="Submit">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    </body>
+{% endblock %}

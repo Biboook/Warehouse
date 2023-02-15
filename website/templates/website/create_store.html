@@ -1,0 +1,20 @@
+{% extends 'website/main.html' %}
+{% load static %}
+
+{% block title %}Create Store{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="block">
+            <form action="{% url 'addstore' %}" method="post">
+                {% csrf_token %}
+                <h1>Add store</h1>
+                <p>Store name: {{ store_form.name }}</p>
+                <button onclick="createWarehouse()">Add</button>
+            </form>
+        </div>
+    </div>
+    <head>
+        <link rel="stylesheet" href="{% static 'website/css/userpage.css' %}">
+    </head>
+{% endblock %}

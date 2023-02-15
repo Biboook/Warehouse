@@ -1,0 +1,56 @@
+    .block {
+        margin-top: 60px;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+    }
+
+    input[type="text"] {
+        padding: 10px;
+        font-size: 16px;
+        margin-bottom: 20px;
+        width: 300px;
+    }
+
+    button {
+        padding: 10px 20px;
+        background-color: #2d2e2f;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        margin-bottom: 20px;
+    }
+
+    #warehouseList {
+        list-style: none;
+        padding: 0;
+    }
+
+
+    #warehouseList {
+        list-style: none;
+        padding: 0;
+    }
+
+    #warehouseList li {
+        background-color: lightgray;
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+    }
+
+    #email {
+        margin-left: 33px;
+    }
+
+    #newpassword {
+        margin-left: 25px;
+    }
+
+    #password {
+        margin-left: 5px;
+    }
