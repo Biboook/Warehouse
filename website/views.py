@@ -1,13 +1,19 @@
-from django.contrib.auth import logout, update_session_auth_hash
+from django.contrib.auth import logout, update_session_auth_hash, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
-from django.contrib.auth.views import PasswordChangeView
-from django.http import HttpResponseNotFound, Http404
-from django.shortcuts import render, HttpResponseRedirect, redirect, get_object_or_404
-from django.urls import reverse, reverse_lazy
+from django.http import HttpResponseNotFound
+from django.shortcuts import render, HttpResponseRedirect, redirect
+from django.urls import reverse
 from website.forms import UserLoginForm, UserRegistrationForm, UserPageForm, StoreForm, ProductForm
 from django.contrib import auth, messages
 from website.models import Store, User, Product
+from django.template.loader import render_to_string
+from django.contrib.sites.shortcuts import get_current_site
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
+from django.core.mail import EmailMessage
+
+from website.tokens import account_activation_token
 
 
 def index(request):
@@ -16,6 +22,64 @@ def index(request):
         'h1': 'Welcome to Our Site',
     }
     return render(request, 'website/index.html', context)
+
+
+def activate(requests, uidb64, token):
+    User = get_user_model()
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except:
+        user = None
+
+    if user is not None and account_activation_token.check_token(user, token):
+        user.is_activa = True
+        user.save()
+
+        messages.success(requests, 'Thank you for your email confirmation. Now can login your account.')
+        return redirect('auth')
+    else:
+        messages.error(requests, 'Activation link is invalid!')
+
+    return redirect('home')
+
+
+def activateEmail(request, user, to_email):
+    mail_subject = 'Activate your user account.'
+    message = render_to_string('website/activate_email.html', {
+        'user': user.username,
+        'domain': get_current_site(request).domain,
+        'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+        'token': account_activation_token.make_token(user),
+        'protocol': 'https' if request.is_secure() else 'http'
+    })
+    email = EmailMessage(mail_subject, message, to=[to_email])
+    if email.send():
+        messages.success(request, f'Dear {user}, please go to you email {to_email} inbox and click on \
+                        received activation link to confirm and complete the registration. Note: Check your spam folder.')
+    else:
+        messages.error(request, f'Problem sending email to {to_email}, check if you typed it correctly.')
+
+def reg(request):
+    if request.method == 'POST':
+        form = UserRegistrationForm(data=request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.is_active = True
+            user.save()
+            activateEmail(request, user, form.cleaned_data.get('email'))
+            return HttpResponseRedirect(reverse('auth'))
+        else:
+            for key, error in list(form.errors.items()):
+                if key == 'captcha' and error[0] == 'This field is required.':
+                    messages.error(request, "You must pass the reCAPTCHA test")
+                    continue
+
+                messages.error(request, error)
+    else:
+        form = UserRegistrationForm()
+    context = {'form': form}
+    return render(request, 'website/register.html', context)
 
 
 def login(request):
@@ -40,18 +104,6 @@ def login(request):
     form = UserLoginForm()
     context = {'form': form}
     return render(request, 'website/login.html', context)
-
-
-def reg(request):
-    if request.method == 'POST':
-        form = UserRegistrationForm(data=request.POST)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(reverse('auth'))
-    else:
-        form = UserRegistrationForm()
-    context = {'form': form}
-    return render(request, 'website/register.html', context)
 
 
 @login_required

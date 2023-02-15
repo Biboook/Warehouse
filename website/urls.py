@@ -12,5 +12,6 @@ urlpatterns = [
     path('logout', views.logout_view, name='logout'),
     path('password/', passchange, name='password-change'),
     path('add-store/', addstore, name='addstore'),
-    path('add-products/', add_product, name='add_products')
+    path('add-products/', add_product, name='add_products'),
+    path('activate/<uidb64>/<token>', views.activate, name='activate')
 ]

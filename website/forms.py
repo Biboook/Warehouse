@@ -36,6 +36,8 @@ class UserRegistrationForm(UserCreationForm):
         for field_name, filed in self.fields.items():
             filed.widget.attrs['class'] = 'input'
 
+    captcha = ReCaptchaField(widget=ReCaptchaV2Checkbox())
+
 
 class UserPageForm(UserChangeForm):
     email = forms.CharField(widget=forms.TextInput(attrs={'readonly': True}))

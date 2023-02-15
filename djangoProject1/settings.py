@@ -132,3 +132,12 @@ AUTH_USER_MODEL = 'website.User'
 RECAPTCHA_PUBLIC_KEY = '6LclZ4IkAAAAAMsIaLeBdhUdXwnheL3wsJARdafU'
 RECAPTCHA_PRIVATE_KEY = '6LclZ4IkAAAAAGJqEnMq2En-vlXSTZjSWrwUDz3L'
 SILENCED_SYSTEM_CHECKS = ['captcha.recaptcha_test_key_error']
+
+# Emailing settings
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_FROM = 'b.rysbek2404@gmail.com'
+EMAIL_HOST_USER = 'b.rysbek2404@gmail.com'
+EMAIL_HOST_PASSWORD = 'qtkqmjnjgmutjqpa'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
