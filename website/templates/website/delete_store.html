@@ -1,0 +1,28 @@
+{% extends 'website/main.html' %}
+
+{% block body %}
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <div class="card">
+                    <div class="card-header bg-danger text-white">
+                        <h4>Are you sure you want to delete "{{ store.name }}"?</h4>
+                    </div>
+                    <div class="card-body">
+                        <form method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger mr-3">Yes</button>
+                            <a href="{% url 'store' %}" class="btn btn-secondary">No</a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <style>
+    .row {
+        margin-top: 100px;
+        align-content: center;
+    }
+    </style>
+{% endblock %}

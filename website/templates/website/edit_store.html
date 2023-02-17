@@ -1,0 +1,47 @@
+{% extends 'website/main.html' %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h1 class="store-name">{{ store.name }}</h1>
+                    </div>
+                    <div class="card-body">
+                        <form method="post">
+                            {% csrf_token %}
+                            {{ form.as_p }}
+                            <p>Адрес:</p>
+                            <p>Реквизиты:</p>
+                            <button type="submit" class="btn btn-success">Save</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <style>
+        .container {
+            margin-top: 80px;
+        }
+
+        .card {
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin-top: 50px;
+        }
+
+        .card-header {
+            text-align: center;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        .btn-success {
+            float: right;
+        }
+    </style>
+{% endblock %}

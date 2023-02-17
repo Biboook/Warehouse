@@ -1,0 +1,90 @@
+{% extends 'website/main.html' %}
+
+{% block title %}{{ store.name }}{% endblock %}
+
+{% block body %}
+    {% if store %}
+        <div class="container">
+            <div class="d-flex justify-content-between">
+                <div class="warehouse-info">
+                    <h2>{{ store.name }}</h2>
+                    <h3>Products:</h3>
+                    <table class="table table-bordered text-center my-table">
+                        <thead>
+                        <tr>
+                            <th>Name of product</th>
+                            <th>Numbers</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% if products %}
+                            {% for product in products %}
+                                <tr>
+                                    <td>{{ product.name }}</td>
+                                    <td>{{ product.numbers }}</td>
+                                </tr>
+                            {% endfor %}
+                        {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+                <div>
+                    <button class="btn btn-secondary" type="button">Приход</button>
+                    <button class="btn btn-danger" type="button">Расход</button>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    <style>
+        .container {
+            margin-top: 80px;
+        }
+
+        .btn {
+            font-size: 16px;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .btn-secondary {
+            background-color: #3d4044;
+            border-color: #3d4044;
+        }
+
+        .btn-secondary:hover {
+            background-color: #3d4044;
+            border-color: #3d4044;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+            border-color: #bd2130;
+        }
+
+        .my-table th, .my-table td {
+            font-size: 16px;
+            padding: 10px;
+            width: 300px;
+        }
+
+        .my-table th {
+            background-color: #3d4044;
+            color: #fff;
+        }
+
+        .my-table tbody tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        .my-table tbody tr:hover {
+            background-color: #e9ecef;
+        }
+
+    </style>
+{% endblock %}

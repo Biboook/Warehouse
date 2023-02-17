@@ -2,7 +2,7 @@ from django.contrib.auth import logout, update_session_auth_hash, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.http import HttpResponseNotFound
-from django.shortcuts import render, HttpResponseRedirect, redirect
+from django.shortcuts import render, HttpResponseRedirect, redirect, get_object_or_404
 from django.urls import reverse
 from website.forms import UserLoginForm, UserRegistrationForm, UserPageForm, StoreForm, ProductForm
 from django.contrib import auth, messages
@@ -59,6 +59,7 @@ def activateEmail(request, user, to_email):
                         received activation link to confirm and complete the registration. Note: Check your spam folder.')
     else:
         messages.error(request, f'Problem sending email to {to_email}, check if you typed it correctly.')
+
 
 def reg(request):
     if request.method == 'POST':
@@ -153,7 +154,6 @@ def passchange(request):
 @login_required
 def get_store(request):
     store = Store.objects.filter(user=request.user)
-    # send all product details including store to sort products by store_id in template
     products = Product.objects.filter(store__user=request.user)
     return render(request, 'website/store.html', {'store': store, 'products':products})
 
@@ -173,13 +173,11 @@ def addstore(request):
 
 
 @login_required
-def add_product(request): # erased store_id, it will come with post request
+def add_product(request):
     if request.method == 'POST':
         product_form = ProductForm(data=request.POST)
         if product_form.is_valid():
             product_form.save()
-
-            # you do not have store_detail view in urls.py so I redirected to the same page
             return redirect('add_products')
         else:
             return redirect('add_products')
@@ -187,3 +185,32 @@ def add_product(request): # erased store_id, it will come with post request
         stores = Store.objects.filter(user=request.user.id)
         product_form = ProductForm()
     return render(request, 'website/add_products.html', {'stores': stores, 'product_form': product_form})
+
+
+@login_required
+def store_detail(request, pk):
+    store = Store.objects.get(pk=pk)
+    products = store.product_set.all()
+    return render(request, 'website/store_detail.html', {'store': store, 'products': products})
+
+
+def edit_store(request, pk):
+    store = Store.objects.get(pk=pk)
+    if request.method == 'POST':
+        form = StoreForm(request.POST, instance=store)
+        if form.is_valid():
+            form.save()
+            return redirect('store_detail', pk=pk)
+    else:
+        form = StoreForm(instance=store)
+    return render(request, 'website/edit_store.html', {'form': form, 'store': store})
+
+
+def delete_store(request, pk):
+    store = Store.objects.get(pk=pk)
+
+    if request.method == 'POST':
+        store.delete()
+        return HttpResponseRedirect(reverse('store'))
+
+    return render(request, 'website/delete_store.html', {'store': store})
