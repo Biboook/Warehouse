@@ -16,5 +16,7 @@ urlpatterns = [
     path('activate/<uidb64>/<token>', views.activate, name='activate'),
     path('store/<int:pk>/', views.store_detail, name='store_detail'),
     path('store/<int:pk>/edit/', views.edit_store, name='edit_store'),
-    path('store/<int:pk>/delete/', views.delete_store, name='delete_store')
+    path('store/<int:pk>/delete/', views.delete_store, name='delete_store'),
+    path('expense/<int:store_id>/', views.expense_product, name='expense_product'),
+    path('expense_history/<int:pk>/', views.expense_history, name='expense_history'),
 ]

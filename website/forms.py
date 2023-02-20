@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, UserChangeForm
-from website.models import User, Store, Product
+from website.models import User, Store, Product, Expense
 from captcha.fields import ReCaptchaField
 from captcha.widgets import ReCaptchaV2Checkbox
 
@@ -65,3 +65,32 @@ class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
         fields = ['name', 'numbers', 'store'] # added store
+
+
+class ExpenseForm(forms.ModelForm):
+    product = forms.ModelChoiceField(queryset=Product.objects.none(), widget=forms.Select(attrs={'class': 'form-control'}))
+    quantity = forms.IntegerField(widget=forms.NumberInput(attrs={'class': 'form-control', 'min': '1'}))
+    destination = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user')
+        store = kwargs.pop('store')
+        super().__init__(*args, **kwargs)
+        self.fields['product'].queryset = Product.objects.filter(store=store)
+        self.fields['product'].empty_label = '---Select Product---'
+
+    class Meta:
+        model = Expense
+        fields = ('product', 'quantity', 'destination')
+
+    def clean(self):
+        cleaned_data = super().clean()
+        product = cleaned_data.get('product')
+        quantity = cleaned_data.get('quantity')
+        if product and quantity:
+            if quantity > product.numbers:
+                raise forms.ValidationError('Requested quantity exceeds the available stock.')
+        return cleaned_data
+
+
+

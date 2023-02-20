@@ -1,12 +1,13 @@
 from django.contrib.auth import logout, update_session_auth_hash, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.http import HttpResponseNotFound
 from django.shortcuts import render, HttpResponseRedirect, redirect, get_object_or_404
 from django.urls import reverse
-from website.forms import UserLoginForm, UserRegistrationForm, UserPageForm, StoreForm, ProductForm
+from website.forms import UserLoginForm, UserRegistrationForm, UserPageForm, StoreForm, ProductForm, ExpenseForm
 from django.contrib import auth, messages
-from website.models import Store, User, Product
+from website.models import Store, User, Product, Expense
 from django.template.loader import render_to_string
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -191,7 +192,15 @@ def add_product(request):
 def store_detail(request, pk):
     store = Store.objects.get(pk=pk)
     products = store.product_set.all()
-    return render(request, 'website/store_detail.html', {'store': store, 'products': products})
+    per_page = 11
+    paginator = Paginator(products, per_page)
+    page_number = request.GET.get('page')
+    page = paginator.get_page(page_number)
+
+    context = {'store': store,
+               'products': page
+               }
+    return render(request, 'website/store_detail.html', context)
 
 
 def edit_store(request, pk):
@@ -214,3 +223,48 @@ def delete_store(request, pk):
         return HttpResponseRedirect(reverse('store'))
 
     return render(request, 'website/delete_store.html', {'store': store})
+
+
+@login_required()
+def expense_product(request, store_id):
+    user = request.user
+    store = get_object_or_404(Store, pk=store_id, user=user)
+    products = Product.objects.filter(store=store)
+    if request.method == 'POST':
+        form = ExpenseForm(user=user, store=store, data=request.POST)
+        if form.is_valid():
+            product = form.cleaned_data['product']
+            quantity = form.cleaned_data['quantity']
+            receiver = form.cleaned_data['destination']
+            if quantity > product.numbers:
+                messages.error(request, 'Requested quantity exceeds the available stock.')
+                return redirect('expense_product', store_id=store_id)
+            product.numbers -= quantity
+            product.save()
+            expense = form.save(commit=False)
+            expense.store = store
+            expense.sender = user
+            expense.receiver = receiver
+            expense.save()
+            messages.success(request, 'The product has been expensed.')
+            return redirect('store_detail', pk=store_id)
+    else:
+        form = ExpenseForm(user=user, store=store)
+    context = {
+        'form': form,
+        'store': store,
+        'products': products,
+    }
+    return render(request, 'website/expense_product.html', context)
+
+
+def expense_history(request, pk):
+    user = request.user
+    store = get_object_or_404(Store, pk=pk, user=user)
+    expenses = Expense.objects.filter(store=store).order_by('-date')
+    context = {
+        'store': store,
+        'expenses': expenses,
+    }
+    return render(request, 'website/show_expense.html', context)
+

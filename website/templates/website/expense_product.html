@@ -1,0 +1,112 @@
+{% extends 'website/main.html' %}
+
+{% block title %}Expense{% endblock %}
+
+{% block body %}
+    {#    <h1>Expense</h1>#}
+    {#    <form method="POST">#}
+    {#        {% csrf_token %}#}
+    {#        <div>#}
+    {#            <label for="product">Product:</label>#}
+    {#            <select id="product" name="product">#}
+    {#                <option value="">---Select Product---</option>#}
+    {#                {% for product in products %}#}
+    {#                    <option value="{{ product.id }}">{{ product.name }} (Available: {{ product.numbers }})</option>#}
+    {#                {% endfor %}#}
+    {#            </select>#}
+    {#        </div>#}
+    {#        <div>#}
+    {#            <label for="quantity">Quantity:</label>#}
+    {#            <input type="number" id="quantity" name="quantity" min="1">#}
+    {#        </div>#}
+    {#        <div>#}
+    {#            <label for="destination">Destination:</label>#}
+    {#            <input type="text" id="destination" name="destination">#}
+    {#        </div>#}
+    {#        <button type="submit">Submit</button>#}
+    {#    </form>#}
+    <h1>Expense Product</h1>
+    <form method="POST">
+        {% csrf_token %}
+        <div>
+            <label for="product">Product:</label>
+            <select id="product" name="product">
+                <option value="">---Select Product---</option>
+                {% for product in products %}
+                    <option value="{{ product.id }}">{{ product.name }} (Available: {{ product.numbers }})</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <label for="quantity">Quantity:</label>
+            <input type="number" id="quantity" name="quantity" min="1">
+        </div>
+        <div>
+            <label for="destination">Destination:</label>
+            <input type="text" id="destination" name="destination">
+        </div>
+        <div>
+            <label for="sender">Sender:</label>
+            <input type="text" id="sender" name="sender" value="{{ user.username }}" readonly>
+        </div>
+        <button type="submit">Submit</button>
+    </form>
+
+
+    <style>
+        h1 {
+            font-size: 2em;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        form {
+            width: 50%;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            font-size: 1.2em;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        select,
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 1em;
+        }
+
+        button[type="submit"] {
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.2em;
+            cursor: pointer;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #3e8e41;
+        }
+
+        p.error-message {
+            color: red;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+    </style>
+{% endblock %}

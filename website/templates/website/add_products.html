@@ -7,22 +7,29 @@
     <div class="container">
         <div class="block">
             {% if success %}
-                <p> {{ success }}</p>
+                <p>{{ success }}</p>
             {% endif %}
             <form action="{% url 'add_products' %}" method="post">
                 {% csrf_token %}
                 <h1>Add products to store</h1>
-                <p>Product: {{ product_form.name }}</p>
-                <p>Quantity: {{ product_form.numbers }}</p>
-                <p>Store Name: <select class="" name="store">
-                    {% if stores %}
-                        {% for store in stores %}
-                            <option value="{{ store.id }}">{{ store.name }}</option>
-                        {% endfor %}
-                    {% else %}
-                        <option value="empty">Add Store first</option>
-                    {% endif %}
-                </select></p>
+                <div class="product-form">
+                    <p><label for="{{ product_form.name.id_for_label }}">Product:</label>{{ product_form.name }}</p>
+                    <p><label for="{{ product_form.numbers.id_for_label }}">Quantity:</label>{{ product_form.numbers }}
+                    </p>
+                    <p><label for="store">Store Name:</label>
+                        <select class="" name="store">
+                            {% if stores %}
+                                {% for store in stores %}
+                                    <option value="{{ store.id }}">{{ store.name }}</option>
+                                {% endfor %}
+                            {% else %}
+                                <option value="empty">Add Store first</option>
+                            {% endif %}
+                        </select>
+                    </p>
+                </div>
+                <div id="product-forms">
+                </div>
                 <button type="submit">Add</button>
                 {% if errors %}
                     {{ errors }}
@@ -30,7 +37,68 @@
             </form>
         </div>
     </div>
-    <head>
-        <link rel="stylesheet" href="{% static 'website/css/userpage.css' %}">
-    </head>
+
+    <style>
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .block {
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px #888888;
+            padding: 20px;
+            width: 500px;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0 0 20px 0;
+        }
+
+        .product-form {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .product-form label {
+            font-weight: bold;
+            margin-right: 10px;
+            width: 70px;
+            flex-basis: 100%;
+        }
+
+        .product-form select,
+        .product-form input[type="text"],
+        .product-form input[type="number"] {
+            flex: 1;
+            padding: 5px;
+            border-radius: 5px;
+            border: 1px solid #cccccc;
+            margin-left: 10px;
+        }
+
+        button[type="submit"] {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #33cc66;
+            color: #ffffff;
+            border: none;
+            cursor: pointer;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #00cc33;
+        }
+
+    </style>
+
 {% endblock %}

@@ -8,7 +8,6 @@
             <div class="d-flex justify-content-between">
                 <div class="warehouse-info">
                     <h2>{{ store.name }}</h2>
-                    <h3>Products:</h3>
                     <table class="table table-bordered text-center my-table">
                         <thead>
                         <tr>
@@ -29,15 +28,35 @@
                     </table>
                 </div>
                 <div>
-                    <button class="btn btn-secondary" type="button">Приход</button>
-                    <button class="btn btn-danger" type="button">Расход</button>
+
+                    <a href="{% url 'expense_product' store.id %}">
+                        <button class="btn btn-success" type="button">Продать</button>
+                    </a>
                 </div>
+            <div>
+                <button class="btn btn-secondary" type="button">Приход</button>
+                <a href="{% url 'expense_history' store.id %}"><button class="btn btn-danger" type="button">Расход</button></a>
+            </div>
             </div>
         </div>
+
+        <div class="pagination">
+            {% if products.has_previous %}
+                <a href="?page={{ products.previous_page_number }}">Предыдущая</a>
+            {% endif %}
+
+            <span class="current-page">{{ products.number }}</span>
+
+            {% if products.has_next %}
+                <a href="?page={{ products.next_page_number }}">Следующая</a>
+            {% endif %}
+        </div>
+
     {% endif %}
     <style>
         .container {
             margin-top: 80px;
+            overflow: hidden;
         }
 
         .btn {
@@ -50,6 +69,8 @@
         .btn-secondary {
             background-color: #3d4044;
             border-color: #3d4044;
+            margin-left: 10px;
+            margin-right: 10px;
         }
 
         .btn-secondary:hover {
@@ -84,6 +105,32 @@
 
         .my-table tbody tr:hover {
             background-color: #e9ecef;
+        }
+
+        .pagination {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .pagination a {
+            margin: 0 10px;
+            color: #3c3c41;
+            text-decoration: none;
+        }
+
+        .pagination .current-page {
+            margin: 0 10px;
+            font-weight: bold;
         }
 
     </style>
