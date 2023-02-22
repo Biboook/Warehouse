@@ -5,9 +5,10 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.http import HttpResponseNotFound
 from django.shortcuts import render, HttpResponseRedirect, redirect, get_object_or_404
 from django.urls import reverse
-from website.forms import UserLoginForm, UserRegistrationForm, UserPageForm, StoreForm, ProductForm, ExpenseForm
+from website.forms import UserLoginForm, UserRegistrationForm, UserPageForm, StoreForm, ProductForm, ExpenseForm, \
+    ArrivalForm
 from django.contrib import auth, messages
-from website.models import Store, User, Product, Expense
+from website.models import Store, User, Product, Expense, Arrival
 from django.template.loader import render_to_string
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -156,7 +157,7 @@ def passchange(request):
 def get_store(request):
     store = Store.objects.filter(user=request.user)
     products = Product.objects.filter(store__user=request.user)
-    return render(request, 'website/store.html', {'store': store, 'products':products})
+    return render(request, 'website/store.html', {'store': store, 'products': products})
 
 
 @login_required
@@ -174,18 +175,40 @@ def addstore(request):
 
 
 @login_required
+# def add_product(request):
+#     if request.method == 'POST':
+#         product_form = ProductForm(data=request.POST)
+#         if product_form.is_valid():
+#             product_form.save()
+#             return redirect('add_products')
+#         else:
+#             return redirect('add_products')
+#     else:
+#         stores = Store.objects.filter(user=request.user.id)
+#         product_form = ProductForm()
+#     return render(request, 'website/add_products.html', {'stores': stores, 'product_form': product_form})
 def add_product(request):
+    stores = Store.objects.filter(user=request.user.id)
     if request.method == 'POST':
         product_form = ProductForm(data=request.POST)
         if product_form.is_valid():
-            product_form.save()
-            return redirect('add_products')
+            product = product_form.save(commit=False)
+            product.store = Store.objects.get(pk=request.POST['store'])
+            product.save()
+            success = "Product added successfully!"
+            product_form = ProductForm()
         else:
-            return redirect('add_products')
+            success = None
     else:
-        stores = Store.objects.filter(user=request.user.id)
+        success = None
         product_form = ProductForm()
-    return render(request, 'website/add_products.html', {'stores': stores, 'product_form': product_form})
+    return render(request, 'website/add_products.html', {'stores': stores, 'product_form': product_form,
+                                                         'success': success})
+
+
+def arrivals(request):
+    arrival = Arrival.objects.filter(store__user=request.user)
+    return render(request, 'website/arrival_products.html', {'arrival': arrival})
 
 
 @login_required
@@ -267,4 +290,3 @@ def expense_history(request, pk):
         'expenses': expenses,
     }
     return render(request, 'website/show_expense.html', context)
-

@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, UserChangeForm
-from website.models import User, Store, Product, Expense
+from website.models import User, Store, Product, Expense, Arrival
 from captcha.fields import ReCaptchaField
 from captcha.widgets import ReCaptchaV2Checkbox
 
@@ -92,5 +92,14 @@ class ExpenseForm(forms.ModelForm):
                 raise forms.ValidationError('Requested quantity exceeds the available stock.')
         return cleaned_data
 
+
+class ArrivalForm(forms.ModelForm):
+
+    class Meta:
+        model = Arrival
+        fields = ['product', 'quantity', 'store']
+        widgets = {
+            'store': forms.HiddenInput(),
+        }
 
 

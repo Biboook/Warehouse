@@ -19,4 +19,5 @@ urlpatterns = [
     path('store/<int:pk>/delete/', views.delete_store, name='delete_store'),
     path('expense/<int:store_id>/', views.expense_product, name='expense_product'),
     path('expense_history/<int:pk>/', views.expense_history, name='expense_history'),
+    path('arrivals_history/', views.arrivals, name='arrivals'),
 ]
