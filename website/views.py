@@ -175,18 +175,6 @@ def addstore(request):
 
 
 @login_required
-# def add_product(request):
-#     if request.method == 'POST':
-#         product_form = ProductForm(data=request.POST)
-#         if product_form.is_valid():
-#             product_form.save()
-#             return redirect('add_products')
-#         else:
-#             return redirect('add_products')
-#     else:
-#         stores = Store.objects.filter(user=request.user.id)
-#         product_form = ProductForm()
-#     return render(request, 'website/add_products.html', {'stores': stores, 'product_form': product_form})
 def add_product(request):
     stores = Store.objects.filter(user=request.user.id)
     if request.method == 'POST':
