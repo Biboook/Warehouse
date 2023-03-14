@@ -10,7 +10,7 @@ from rest_framework.authentication import TokenAuthentication
 from .permissions import *
 
 
-class ProductAPIList(generics.ListCreateAPIView):
+class ProductAPIList(generics.ListAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     permission_classes = (IsOwner, IsAuthenticated)
@@ -20,20 +20,10 @@ class ProductAPIList(generics.ListCreateAPIView):
         return Product.objects.filter(store__user=user)
 
 
-class StoreAPIDestroy(generics.RetrieveDestroyAPIView):
+class StoreAPIList(generics.RetrieveUpdateDestroyAPIView):
     queryset = Store.objects.all()
     serializer_class = StoreSerializer
-    permission_classes = (IsOwner, IsAuthenticated)
-
-    def get_queryset(self):
-        user = self.request.user
-        return Store.objects.filter(user=user)
-
-
-class StoreAPIUpdate(generics.RetrieveUpdateAPIView):
-    queryset = Store.objects.all()
-    serializer_class = StoreSerializer
-    permission_classes = (IsOwner, IsAuthenticated)
+    permission_classes = (IsAuthenticated, )
 
     def get_queryset(self):
         user = self.request.user

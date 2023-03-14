@@ -2,13 +2,16 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
+import uuid
 
 
 class User(AbstractUser):
     pass
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
 
 class Store(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=64)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
@@ -65,6 +68,7 @@ def create_arrival_on_product_create(sender, instance, created, **kwargs):
     if created:
         arrival = Arrival(product=instance, quantity=instance.numbers, store=instance.store)
         arrival.save()
+
 
 @receiver(post_delete, sender=Product)
 def delete_arrival_on_product_delete(sender, instance, **kwargs):
